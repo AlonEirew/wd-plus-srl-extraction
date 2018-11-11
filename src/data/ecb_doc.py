@@ -16,7 +16,7 @@ class ECBDoc(object):
     def find_token_and_set_cluster_id(self, tok_id, cluster_num):
         found = False
         for token in self.tokens:
-            if token.allen_doc_tok_id_span and tok_id in token.allen_doc_tok_id_span:
+            if token.doc_tok_id_span and tok_id in token.doc_tok_id_span:
                 token.within_coref.add(cluster_num)
                 found = True
 
@@ -34,27 +34,32 @@ class ECBDoc(object):
         x = 0
         for i in range(0, len(allen_doc)):
             for j in range(x, len(self.tokens)):
-                if not self.tokens[j].allen_doc_tok_id_span:
+                if not self.tokens[j].doc_tok_id_span:
                     if allen_doc[i] == self.tokens[j].token_text:
-                        self.tokens[j].allen_doc_tok_id_span = [i, i]
-                        self.tokens[j].allen_span_closed = True
-                        self.tokens[j-1].allen_span_closed = True
+                        self.tokens[j].doc_tok_id_span = [i, i]
+                        self.tokens[j].span_closed = True
+                        self.tokens[j-1].span_closed = True
                         x = j - 1
                         break
                     elif allen_doc[i] in self.tokens[j].token_text:
-                        self.tokens[j].allen_doc_tok_id_span = [i]
+                        self.tokens[j].doc_tok_id_span = [i]
                         x = j - 1
                         break
                     elif self.tokens[j].token_text in allen_doc[i]:
-                        self.tokens[j].allen_doc_tok_id_span = [i]
-                        self.tokens[j].allen_span_closed = True
-                        self.tokens[j - 1].allen_span_closed = True
+                        self.tokens[j].doc_tok_id_span = [i]
+                        self.tokens[j].span_closed = True
+                        self.tokens[j - 1].span_closed = True
                         x = j - 1
                         break
                 elif allen_doc[i] in self.tokens[j].token_text:
-                    self.tokens[j].allen_doc_tok_id_span.append(i)
+                    self.tokens[j].doc_tok_id_span.append(i)
                     x = j - 1
                     break
+
+    def align_with_spacy_doc(self, spacy_doc):
+        spacy_clusters = spacy_doc._.coref_clusters
+        for spacy_cluster in spacy_clusters:
+            pass
 
     def create_mentions_data(self):
         mentions_result = list()

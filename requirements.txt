@@ -1,1 +1,2 @@
 allennlp
+spacy==2.0.12
