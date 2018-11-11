@@ -15,9 +15,8 @@ def evaluate_coref(ecb_path):
     for doc in documents:
         spacy_doc = nlp(doc.text)
         if spacy_doc._.has_coref:
-            doc.align_with_spacy_doc(spacy_doc)
-            # doc.align_with_allen_doc(prediction['document'])
-            # doc.set_within_coref(prediction['clusters'])
+            doc.align_with_resource_doc(spacy_doc)
+            doc.set_within_spacy_coref(spacy_doc._.coref_clusters)
             mention_result = doc.create_mentions_data()
             print(json.dumps(mention_result, default=json_serialize_default))
             all_mentions.extend(mention_result)
@@ -31,10 +30,9 @@ if __name__ == '__main__':
     parser.add_argument('--ecb_root_path', type=str, help='corpus root', required=True)
     parser.add_argument('--output_file', type=str, help='output file', required=True)
     parser.add_argument('--model', type=str, help='spacy model', required=True)
-
-    nlp = spacy.load('en_coref_lg')
-
     args = parser.parse_args()
+
+    nlp = spacy.load(args.model)
     io.create_if_not_exist(os.path.dirname(args.output_file))
     coref_result = evaluate_coref(args.ecb_root_path)
 
