@@ -2,18 +2,18 @@ from typing import List
 
 
 class Mention(object):
-    def __init__(self, doc_id: str, sent_id: int, tokens: List[int],
-                 mention_str: str, cur_with: str):
+    def __init__(self, doc_id: str, sent_id: int, tokens_number: List[int],
+                 tokens_str: str, coref_chain: str):
         '''
 
         :param doc_id: the document ID
         :param sent_id: the mention sentence ID
-        :param tokens: the tokens number (list in case of a span)
-        :param mention_str: the mention text
-        :param cur_with: the within doc co-reference
+        :param tokens_number: the tokens number (list in case of a span)
+        :param tokens_str: the mention text
+        :param coref_chain: the within doc co-reference
         '''
         self.doc_id = doc_id
         self.sent_id = sent_id
-        self.tokens = tokens
-        self.mention_str = mention_str
-        self.cur_with = cur_with
+        self.tokens_number = tokens_number
+        self.tokens_str = tokens_str
+        self.coref_chain = coref_chain
