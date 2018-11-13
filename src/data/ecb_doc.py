@@ -1,5 +1,7 @@
+import string
 from os import walk
 from os.path import join
+from typing import List
 from xml.etree import ElementTree
 
 from src.data.mention import Mention
@@ -8,7 +10,7 @@ from src.data.token import Token
 
 
 class ECBDoc(object):
-    def __init__(self, doc_id, text, tokens):
+    def __init__(self, doc_id: str, text: str, tokens: List[Token]):
         self.doc_id = doc_id
         self.text = text
         self.tokens = tokens
@@ -21,7 +23,7 @@ class ECBDoc(object):
                 found = True
 
         if not found:
-            print("**** Token not found for-" + self.doc_id + ', Allen token-' + str(tok_id))
+            print("**** Token not found for-" + self.doc_id + ', Resource token-' + str(tok_id))
 
     def set_within_allen_coref(self, clusters):
         for i in range(0, len(clusters)):
@@ -42,24 +44,31 @@ class ECBDoc(object):
         x = 0
         for i in range(0, len(resource_doc)):
             for j in range(x, len(self.tokens)):
+                resource_token = str(resource_doc[i])
                 if not self.tokens[j].doc_tok_id_span:
-                    if str(resource_doc[i]) == self.tokens[j].token_text:
+                    if resource_token == self.tokens[j].token_text:
                         self.tokens[j].doc_tok_id_span = [i, i]
                         self.tokens[j].span_closed = True
                         self.tokens[j-1].span_closed = True
                         x = j - 1
                         break
-                    elif str(resource_doc[i]) in self.tokens[j].token_text:
+                    elif len(resource_token) > 1 and \
+                            resource_token in self.tokens[j].token_text or \
+                            len(resource_token) == 1 and resource_token in self.tokens[j].token_text and \
+                            (resource_token in string.punctuation or resource_token == 's'):
                         self.tokens[j].doc_tok_id_span = [i]
                         x = j - 1
                         break
-                    elif self.tokens[j].token_text in str(resource_doc[i]):
+                    elif self.tokens[j].token_text in resource_token:
                         self.tokens[j].doc_tok_id_span = [i]
                         self.tokens[j].span_closed = True
                         self.tokens[j - 1].span_closed = True
                         x = j - 1
                         break
-                elif str(resource_doc[i]) in self.tokens[j].token_text:
+                elif not self.tokens[j].span_closed and (len(resource_token) > 1 and \
+                        resource_token in self.tokens[j].token_text or \
+                        len(resource_token) == 1 and resource_token in self.tokens[j].token_text and \
+                        (resource_token in string.punctuation or resource_token == 's')):
                     self.tokens[j].doc_tok_id_span.append(i)
                     x = j - 1
                     break
@@ -73,8 +82,6 @@ class ECBDoc(object):
                 token.within_coref.remove(cur_with)
                 mention_str = token.token_text
                 token_ids = [token.token_id]
-                doc_id = self.doc_id
-                sent_id = token.sent_id
                 for j in range(i+1, len(self.tokens)):
                     if cur_with in self.tokens[j].within_coref:
                         mention_str += ' ' + self.tokens[j].token_text
@@ -83,7 +90,7 @@ class ECBDoc(object):
                     else:
                         break
 
-                mention_data = Mention(doc_id, int(sent_id), token_ids, mention_str, str(cur_with))
+                mention_data = Mention(self.doc_id, int(token.sent_id), token_ids, mention_str, str(cur_with))
                 mentions_result.append(mention_data)
 
         return mentions_result
@@ -108,7 +115,7 @@ class ECBDoc(object):
         return sentences
 
     @staticmethod
-    def read_ecb(ecb_path):
+    def read_ecb(ecb_path: str):
         documents = list()
         for (dirpath, folders, files) in walk(ecb_path):
             for file in files:

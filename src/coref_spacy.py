@@ -1,15 +1,17 @@
 import argparse
 import json
 import os
+from typing import List
 
 import spacy
 
 from src.data import io
 from src.data.ecb_doc import ECBDoc
 from src.data.io import json_serialize_default
+from src.data.mention import Mention
 
 
-def evaluate_coref(ecb_path):
+def evaluate_coref(ecb_path: str) -> List[Mention]:
     documents = ECBDoc.read_ecb(ecb_path)
     all_mentions = list()
     for doc in documents:
