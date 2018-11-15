@@ -40,7 +40,22 @@ class ECBDoc(object):
                 for tok_id in range(coref_span[0], coref_span[1]):
                     self.find_token_and_set_cluster_id(tok_id, i)
 
-    def align_with_resource_doc(self, resource_doc):
+    def align_spacy_with_resource_doc(self, resource_doc):
+        for i in range(0, len(resource_doc)):
+            if str(resource_doc[i]) == self.tokens[i].token_text:
+                self.tokens[i].doc_tok_id_span = [i, i]
+                self.tokens[i].span_closed = True
+            else:
+                print('***** OUT OF SYNC ****')
+
+    def get_words(self):
+        words = list()
+        for token in self.tokens:
+            words.append(token.token_text)
+
+        return words
+
+    def align_allen_with_resource_doc(self, resource_doc):
         x = 0
         for i in range(0, len(resource_doc)):
             for j in range(x, len(self.tokens)):

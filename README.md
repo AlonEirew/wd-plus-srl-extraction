@@ -41,3 +41,42 @@ Run
 
 
     python src/coref_spacy.py --ecb_root_path=ECB+ --output_file=output/spacy_wd_coref.json --model=en_coref_lg
+    
+Output
+--
+Output is in a json format, containing a list of within document coreference mentions:
+
+    [
+        {
+            "coref_chain": "0",
+            "doc_id": "36_5ecb.xml",
+            "sent_id": 4,
+            "tokens_number": [
+                1,
+                2
+            ],
+            "tokens_str": "Mr. Blackmore"
+        },
+        {
+            "coref_chain": "0",
+            "doc_id": "36_5ecb.xml",
+            "sent_id": 4,
+            "tokens_number": [
+                7
+            ],
+            "tokens_str": "he"
+        },
+        .
+        .
+        .
+    ]
+    
+#### Where:
+  
+| json field  | Value | comment |
+| ------------- | ------------- | ------------- |
+| coref_chain | Text | The mention coref cluster id |
+| doc_id | Text | the document this mention belong to |
+| sent_id | int | Mention original document sentence ID |
+| tokens_number | List[int] | Mention span (text phrase as set in tokens_str) original tokens ids |
+| tokens_str | String | The mention/span phrase |

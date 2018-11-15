@@ -16,7 +16,7 @@ def evaluate_coref(ecb_path):
     all_mentions = list()
     for doc in documents:
         prediction = predictor.predict(document=doc.text)
-        doc.align_with_resource_doc(prediction['document'])
+        doc.align_allen_with_resource_doc(prediction['document'])
         doc.set_within_allen_coref(prediction['clusters'])
         mention_result = doc.create_mentions_data()
         print(json.dumps(mention_result, default=json_serialize_default))

@@ -15,9 +15,12 @@ def evaluate_coref(ecb_path: str) -> List[Mention]:
     documents = ECBDoc.read_ecb(ecb_path)
     all_mentions = list()
     for doc in documents:
-        spacy_doc = nlp(doc.text)
+        spacy_doc = nlp.tokenizer.tokens_from_list(doc.get_words())
+        for pipe in filter(None, nlp.pipeline):
+            pipe[1](spacy_doc)
+
         if spacy_doc._.has_coref:
-            doc.align_with_resource_doc(spacy_doc)
+            doc.align_spacy_with_resource_doc(spacy_doc)
             doc.set_within_spacy_coref(spacy_doc._.coref_clusters)
             mention_result = doc.create_mentions_data()
             print(json.dumps(mention_result, default=json_serialize_default))
