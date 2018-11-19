@@ -20,7 +20,7 @@ def evaluate_coref(ecb_path: str) -> List[Mention]:
             pipe[1](spacy_doc)
 
         if spacy_doc._.has_coref:
-            doc.align_spacy_with_resource_doc(spacy_doc)
+            doc.align_with_resource_doc(spacy_doc)
             doc.set_within_spacy_coref(spacy_doc._.coref_clusters)
             mention_result = doc.create_mentions_data()
             print(json.dumps(mention_result, default=json_serialize_default))

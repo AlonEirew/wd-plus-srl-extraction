@@ -20,6 +20,12 @@ class Sentence(object):
 
         return self.sent_text
 
+    def get_sentence_words(self):
+        words = list()
+        for token in self.sent_tokens:
+            words.append(token.token_text)
+        return words
+
     @staticmethod
     def align_text(text):
         last_tok = ''
@@ -42,31 +48,6 @@ class Sentence(object):
         if self.sent_text == '':
             return self._gen_text()
         return self.sent_text
-
-    def align_with_allen(self, allen_phase):
-        allen_phrase_split = allen_phase.split()
-        x = 0
-        tok_ids = list()
-        try:
-            for i in range(0, len(self.sent_tokens)):
-                if allen_phrase_split[0] == self.sent_tokens[i].token_text:
-                    x = i
-                    for j in range(0, len(allen_phrase_split)):
-                        if allen_phrase_split[j] == self.sent_tokens[x].token_text:
-                            tok_ids.append(self.sent_tokens[x].token_id)
-                            x += 1
-                        else:
-                            break
-
-                    if j == len(allen_phrase_split) - 1:
-                        return tok_ids
-
-                    tok_ids = list()
-        except:
-            print('Except: Failed to find tokens in document-' + str(self.doc_id) + ', sent-' + str(
-                self.sent_id))
-
-        return tok_ids
 
 
 class SRLSentence(object):
@@ -95,16 +76,41 @@ class SRLVerb(object):
         self.arg_loc = None
         self.arg_neg = None
 
-    def add_var(self, var, tok_ids):
-        if len(tok_ids) > 0:
-            pair = var.split(':')
-            if pair[0] == 'ARG0':
-                self.arg0 = SRLArg(pair[1].strip(), tok_ids)
-            elif pair[0] == 'V':
-                self.verb = SRLArg(pair[1].strip(), tok_ids)
-            elif pair[0] == 'ARG1':
-                self.arg1 = SRLArg(pair[1].strip(), tok_ids)
-            elif pair[0] == 'ARGM-TMP':
-                self.arg_tmp = SRLArg(pair[1].strip(), tok_ids)
-            elif pair[0] == 'ARGM-LOC':
-                self.arg_loc = SRLArg(pair[1].strip(), tok_ids)
+    def add_var(self, tags, words):
+        arg0_text = ''
+        arg1_text = ''
+        verb_text = ''
+        arg_temp_text = ''
+        arg_loc_text = ''
+        arg0_toks = list()
+        arg1_toks = list()
+        verb_toks = list()
+        arg_temp_toks = list()
+        arg_loc_toks = list()
+        for i in range(0, len(tags)):
+            if '-ARG0' in tags[i]:
+                arg0_text += words[i] + ' '
+                arg0_toks.append(i)
+            elif '-V' in tags[i]:
+                verb_text += words[i] + ' '
+                verb_toks.append(i)
+            elif '-ARG1' in tags[i]:
+                arg1_text += words[i] + ' '
+                arg1_toks.append(i)
+            elif '-ARGM-TMP' in tags[i]:
+                arg_temp_text += words[i] + ' '
+                arg_temp_toks.append(i)
+            elif '-ARGM-LOC' in tags[i]:
+                arg_loc_text += words[i] + ' '
+                arg_loc_toks.append(i)
+
+        if arg0_toks and arg0_text:
+            self.arg0 = SRLArg(arg0_text.strip(), arg0_toks)
+        if verb_toks and verb_text:
+            self.verb = SRLArg(verb_text.strip(), verb_toks)
+        if arg1_toks and arg1_text:
+            self.arg1 = SRLArg(arg1_text.strip(), arg1_toks)
+        if arg_temp_toks and arg_temp_text:
+            self.arg_tmp = SRLArg(arg_temp_text.strip(), arg_temp_toks)
+        if arg_loc_toks and arg_loc_text:
+            self.arg_loc = SRLArg(arg_loc_text.strip(), arg_loc_toks)

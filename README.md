@@ -13,7 +13,7 @@ Overview
 Pre-Requirements
 --
 - Python 3.6 or higher
-- allennlp
+- allennlp *(Code here uses methods that might not have been released yet by AllenNLP, there might be a need to checkout AllenNLP latest and build locally)*
 - spacy
 - Download Within doc SpaCy model from <a href="https://github.com/huggingface/neuralcoref">neuralcoref</a>
 - ECB+ corpus root folder named 'ECB+' (<a href="http://www.newsreader-project.eu/results/data/the-ecb-corpus/">Download ECB+</a>)

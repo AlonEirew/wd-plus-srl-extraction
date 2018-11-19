@@ -1,14 +1,13 @@
 import argparse
 import json
 import os
-import re
 
 from allennlp.predictors.predictor import Predictor
 
 from src.data import io
 from src.data.ecb_doc import ECBDoc
 from src.data.io import json_serialize_default
-from src.data.sentence import SRLSentence, SRLVerb, Sentence, SRLArg
+from src.data.sentence import SRLSentence, SRLVerb, SRLArg
 
 
 def run_srl(ecb_path):
@@ -20,27 +19,18 @@ def run_srl(ecb_path):
     all_sentence_verbs = list()
     for sentence in sentences:
         srl_sentence = SRLSentence(sentence.doc_id, sentence.sent_id)
-        sentence_text = sentence.get_text()
-        prediction = predictor.predict(sentence=sentence_text)
+        sentence_word = sentence.get_sentence_words()
+        prediction = predictor.predict_tokenized(tokenized_sentence=sentence_word)
         verbs = prediction['verbs']
+        words = prediction['words']
         for verb in verbs:
             srl_verb = SRLVerb()
-            desc = verb['description']
-            groups = re.findall(r'\[([\-A-Za-z0-9]+:+\s[\sA-Za-z0-9;:\'`@#$%^&*()_\-+=!?“”"/\\]+)\]', desc)
-            for group in groups:
-                allen_phase = group.split(':')[1].strip()
-                tok_ids = sentence.align_with_allen(allen_phase)
-                if len(tok_ids) == 0:
-                    allen_phase_align = Sentence.align_text(allen_phase)
-                    tok_ids = sentence.align_with_allen(allen_phase_align)
-                    if len(tok_ids) == 0:
-                        print('Failed to find tokens in document-' + str(sentence.doc_id) + ', sent-' + str(sentence.sent_id))
-                srl_verb.add_var(group, tok_ids)
-
+            tags = verb['tags']
+            srl_verb.add_var(tags, words)
             srl_sentence.add_srl_vrb(srl_verb)
 
         all_sentence_verbs.append(srl_sentence)
-        # print(all_sentence_verbs)
+        print('Dont with sentence from doc-' + sentence.doc_id + ', withId-' + str(sentence.sent_id))
 
     return all_sentence_verbs
 

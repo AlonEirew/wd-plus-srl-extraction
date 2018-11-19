@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 
+import spacy
 from allennlp.predictors.predictor import Predictor
 
 from src.data import io
@@ -15,8 +16,8 @@ def evaluate_coref(ecb_path):
         "https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz")
     all_mentions = list()
     for doc in documents:
-        prediction = predictor.predict(document=doc.text)
-        doc.align_allen_with_resource_doc(prediction['document'])
+        prediction = predictor.predict_tokenized(tokenized_document=doc.get_words())
+        doc.align_with_resource_doc(prediction['document'])
         doc.set_within_allen_coref(prediction['clusters'])
         mention_result = doc.create_mentions_data()
         print(json.dumps(mention_result, default=json_serialize_default))
@@ -32,6 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_file', type=str, help='output file', required=True)
 
     args = parser.parse_args()
+    nlp = spacy.load('en_core_web_sm')
     io.create_if_not_exist(os.path.dirname(args.output_file))
     coref_result = evaluate_coref(args.ecb_root_path)
 

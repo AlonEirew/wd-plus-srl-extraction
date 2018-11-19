@@ -1,4 +1,3 @@
-import string
 from os import walk
 from os.path import join
 from typing import List
@@ -40,7 +39,7 @@ class ECBDoc(object):
                 for tok_id in range(coref_span[0], coref_span[1]):
                     self.find_token_and_set_cluster_id(tok_id, i)
 
-    def align_spacy_with_resource_doc(self, resource_doc):
+    def align_with_resource_doc(self, resource_doc):
         for i in range(0, len(resource_doc)):
             if str(resource_doc[i]) == self.tokens[i].token_text:
                 self.tokens[i].doc_tok_id_span = [i, i]
@@ -54,39 +53,6 @@ class ECBDoc(object):
             words.append(token.token_text)
 
         return words
-
-    def align_allen_with_resource_doc(self, resource_doc):
-        x = 0
-        for i in range(0, len(resource_doc)):
-            for j in range(x, len(self.tokens)):
-                resource_token = str(resource_doc[i])
-                if not self.tokens[j].doc_tok_id_span:
-                    if resource_token == self.tokens[j].token_text:
-                        self.tokens[j].doc_tok_id_span = [i, i]
-                        self.tokens[j].span_closed = True
-                        self.tokens[j-1].span_closed = True
-                        x = j - 1
-                        break
-                    elif len(resource_token) > 1 and \
-                            resource_token in self.tokens[j].token_text or \
-                            len(resource_token) == 1 and resource_token in self.tokens[j].token_text and \
-                            (resource_token in string.punctuation or resource_token == 's'):
-                        self.tokens[j].doc_tok_id_span = [i]
-                        x = j - 1
-                        break
-                    elif self.tokens[j].token_text in resource_token:
-                        self.tokens[j].doc_tok_id_span = [i]
-                        self.tokens[j].span_closed = True
-                        self.tokens[j - 1].span_closed = True
-                        x = j - 1
-                        break
-                elif not self.tokens[j].span_closed and (len(resource_token) > 1 and \
-                        resource_token in self.tokens[j].token_text or \
-                        len(resource_token) == 1 and resource_token in self.tokens[j].token_text and \
-                        (resource_token in string.punctuation or resource_token == 's')):
-                    self.tokens[j].doc_tok_id_span.append(i)
-                    x = j - 1
-                    break
 
     def create_mentions_data(self):
         mentions_result = list()
