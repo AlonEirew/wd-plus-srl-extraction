@@ -1,4 +1,4 @@
-# ecb-wd-plus-srl-extraction
+# wd-plus-srl-extraction
 Different methods for extracting Within-Document(WD) and Semantic-Role-Labeling(SRL) information from ECB+ corpus, then align the extracted information with ECB+ tokens and sentences ids
 
 Overview
