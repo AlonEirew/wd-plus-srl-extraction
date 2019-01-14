@@ -1,14 +1,16 @@
 # wd-plus-srl-extraction
-Different methods for extracting Within-Document(WD) and Semantic-Role-Labeling(SRL) information from ECB+ corpus, then align the extracted information with ECB+ tokens and sentences ids
+Different methods for extracting Within-Document(WD) and Semantic-Role-Labeling(SRL) information already tokenized corpus, then align the extracted information
+
+Include implementation for extracting from ECB+ corpus
 
 Overview
 --
 
 #### Current Implementations:
 
-- *AllenNLP Coreference Resolution:* For extracting AllenNLP within document coreference from ECB+ corpus and align mentions
-- *AllenNLP Semantic Role Labeling:* For extracting AllenNLP SRL relations from ECB+ corpus and align mentions and tokens
-- *SpaCy Coreference Resolution:* For extracting SpaCy within document coreference from ECB+ corpus and align mentions
+- *AllenNLP Coreference Resolution:* For extracting AllenNLP within document coreference
+- *AllenNLP Semantic Role Labeling:* For extracting AllenNLP SRL relations 
+- *SpaCy Coreference Resolution:* For extracting SpaCy within document coreference
 
 Pre-Requirements
 --
@@ -16,7 +18,7 @@ Pre-Requirements
 - allennlp *(Code here uses methods that might not have been released yet by AllenNLP, there might be a need to checkout AllenNLP latest and build locally)*
 - spacy
 - Download Within doc SpaCy model from <a href="https://github.com/huggingface/neuralcoref">neuralcoref</a>
-- ECB+ corpus root folder named 'ECB+' (<a href="http://www.newsreader-project.eu/results/data/the-ecb-corpus/">Download ECB+</a>)
+- if running ECB+ corpus, download from (<a href="http://www.newsreader-project.eu/results/data/the-ecb-corpus/">Download ECB+</a>)
 
 Install
 --
@@ -42,6 +44,14 @@ Run
 
     python src/coref_spacy.py --ecb_root_path=ECB+ --output_file=output/spacy_wd_coref.json --model=en_coref_lg
     
+
+Experiment with other corpus
+--
+* Clone the repo
+* Inherit `IDataLoader` and create a new `DataLoader` for parsing your corpus (see `EcbDataLoader` for example)
+* replace `DataLoader` in required model `main()` method
+
+
 Output
 --
 Output is in a json format, containing a list of within document coreference mentions:
