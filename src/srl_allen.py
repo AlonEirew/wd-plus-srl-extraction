@@ -5,17 +5,18 @@ import os
 from allennlp.predictors.predictor import Predictor
 
 from src.data import io
-from src.data.ecb_doc import ECBDoc
+from src.data.data_loader import EcbDataLoader, IDataLoader
+from src.data.doc import Doc
 from src.data.io import json_serialize_default
 from src.data.sentence import SRLSentence, SRLVerb, SRLArg
 
 
-def run_srl(ecb_path):
-    documents = ECBDoc.read_ecb(ecb_path)
+def run_srl(ecb_path: str, data_loader: IDataLoader):
+    documents = data_loader.read_data_from_corpus_folder(ecb_path)
     predictor = Predictor.from_path(
         "https://s3-us-west-2.amazonaws.com/allennlp/models/srl-model-2018.05.25.tar.gz")
 
-    sentences = ECBDoc.to_sentences(documents)
+    sentences = Doc.to_sentences(documents)
     all_sentence_verbs = list()
     for sentence in sentences:
         srl_sentence = SRLSentence(sentence.doc_id, sentence.sent_id)
@@ -86,7 +87,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     io.create_if_not_exist(os.path.dirname(args.output_file))
-    srl_result = run_srl(args.ecb_root_path)
+
+    ecb_data_loader = EcbDataLoader()
+    srl_result = run_srl(args.ecb_root_path, ecb_data_loader)
 
     with open(args.output_file, 'w') as f:
         json.dump(srl_result, f, default=json_serialize_default, indent=4, sort_keys=True)

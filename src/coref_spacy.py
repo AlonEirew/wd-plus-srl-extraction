@@ -6,13 +6,13 @@ from typing import List
 import spacy
 
 from src.data import io
-from src.data.ecb_doc import ECBDoc
+from src.data.data_loader import EcbDataLoader, IDataLoader
 from src.data.io import json_serialize_default
 from src.data.mention import Mention
 
 
-def evaluate_coref(ecb_path: str) -> List[Mention]:
-    documents = ECBDoc.read_ecb(ecb_path)
+def evaluate_coref(ecb_path: str, data_loader: IDataLoader) -> List[Mention]:
+    documents = data_loader.read_data_from_corpus_folder(ecb_path)
     all_mentions = list()
     for doc in documents:
         spacy_doc = nlp.tokenizer.tokens_from_list(doc.get_words())
@@ -39,7 +39,9 @@ if __name__ == '__main__':
 
     nlp = spacy.load(args.model)
     io.create_if_not_exist(os.path.dirname(args.output_file))
-    coref_result = evaluate_coref(args.ecb_root_path)
+
+    ecb_data_loader = EcbDataLoader()
+    coref_result = evaluate_coref(args.ecb_root_path, ecb_data_loader)
 
     with open(args.output_file, 'w') as f:
         json.dump(coref_result, f, default=json_serialize_default, indent=4, sort_keys=True)

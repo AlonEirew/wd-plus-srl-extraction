@@ -6,12 +6,12 @@ import spacy
 from allennlp.predictors.predictor import Predictor
 
 from src.data import io
-from src.data.ecb_doc import ECBDoc
+from src.data.data_loader import EcbDataLoader, IDataLoader
 from src.data.io import json_serialize_default
 
 
-def evaluate_coref(ecb_path):
-    documents = ECBDoc.read_ecb(ecb_path)
+def evaluate_coref(ecb_path: str, data_loader: IDataLoader):
+    documents = data_loader.read_data_from_corpus_folder(ecb_path)
     predictor = Predictor.from_path(
         "https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz")
     all_mentions = list()
@@ -35,7 +35,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     nlp = spacy.load('en_core_web_sm')
     io.create_if_not_exist(os.path.dirname(args.output_file))
-    coref_result = evaluate_coref(args.ecb_root_path)
+
+    ecb_data_loader = EcbDataLoader()
+    coref_result = evaluate_coref(args.ecb_root_path, ecb_data_loader)
 
     with open(args.output_file, 'w') as f:
         json.dump(coref_result, f, default=json_serialize_default, indent=4, sort_keys=True)
