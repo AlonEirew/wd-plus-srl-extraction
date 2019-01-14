@@ -1,7 +1,9 @@
 # wd-plus-srl-extraction
-Different methods for extracting Within-Document(WD) and Semantic-Role-Labeling(SRL) information already tokenized corpus, then align the extracted information
+This model was developed in order to extract SpaCy/AllenNLP `coref` and `SRL` from already tokenized corpus, 
+in order to avoid aligning model output tokenization with corpus tokenization (which are usually different). 
+im using the corpus tagged data (tokens, sentences,...) to create the tokenized data in the SpaCy format then feed to the SRL/coref model while skipping model tokenization pipeline.
 
-Include implementation for extracting from ECB+ corpus
+Include implementation/example for extracting ECB+ corpus SRL/coref information
 
 Overview
 --
