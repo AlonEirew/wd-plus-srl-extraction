@@ -13,6 +13,7 @@ Overview
 - *AllenNLP Coreference Resolution:* For extracting AllenNLP within document coreference
 - *AllenNLP Semantic Role Labeling:* For extracting AllenNLP SRL relations 
 - *SpaCy Coreference Resolution:* For extracting SpaCy within document coreference
+- *Stanford Coreference Resolution:* [Can be found in this link](https://github.com/AlonEirew/wd-stanford-coref)
 
 Pre-Requirements
 --
