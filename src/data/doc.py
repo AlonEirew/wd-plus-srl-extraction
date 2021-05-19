@@ -10,6 +10,7 @@ class Doc(object):
         self.doc_id = doc_id
         self.text = text
         self.tokens = tokens
+        self.cluster_running_index = 0
 
     def find_token_and_set_cluster_id(self, tok_id, cluster_num):
         found = False
@@ -26,15 +27,20 @@ class Doc(object):
             cluster = clusters[i]
             for coref_span in cluster:
                 for tok_id in range(coref_span[0], coref_span[1] + 1):
-                    self.find_token_and_set_cluster_id(tok_id, i)
+                    self.find_token_and_set_cluster_id(tok_id, self.cluster_running_index)
+
+            self.cluster_running_index += 1
 
     def set_within_spacy_coref(self, clusters):
         for i in range(0, len(clusters)):
             cluster = clusters[i]
             for mention in cluster:
                 coref_span = [mention.start, mention.end]
-                for tok_id in range(coref_span[0], coref_span[1]):
-                    self.find_token_and_set_cluster_id(tok_id, i)
+                if mention.end - mention.start <= 5:
+                    for tok_id in range(coref_span[0], coref_span[1]):
+                        self.find_token_and_set_cluster_id(tok_id, self.cluster_running_index)
+
+            self.cluster_running_index += 1
 
     def align_with_resource_doc(self, resource_doc):
         for i in range(0, len(resource_doc)):
@@ -53,7 +59,7 @@ class Doc(object):
 
     def create_mentions_data(self):
         mentions_result = list()
-        for i in range(0,len(self.tokens)):
+        for i in range(0, len(self.tokens)):
             token = self.tokens[i]
             while len(token.within_coref) > 0:
                 cur_with = next(iter(token.within_coref))

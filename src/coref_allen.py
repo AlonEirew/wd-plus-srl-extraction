@@ -2,9 +2,7 @@ import argparse
 import json
 import os
 
-import spacy
-from allennlp.predictors.predictor import Predictor
-
+from allennlp_models import pretrained
 from src.data import io
 from src.data.data_loader import EcbDataLoader, IDataLoader
 from src.data.io import json_serialize_default
@@ -12,11 +10,15 @@ from src.data.io import json_serialize_default
 
 def evaluate_coref(ecb_path: str, data_loader: IDataLoader):
     documents = data_loader.read_data_from_corpus_folder(ecb_path)
-    predictor = Predictor.from_path(
-        "https://s3-us-west-2.amazonaws.com/allennlp/models/coref-model-2018.02.05.tar.gz")
+    # predictor = Predictor.from_path(
+    #     "/Users/aeirew/workspace/ecb-wd-plus-srl-extraction/data/coref-spanbert-large-2021.03.10.tar.gz")
+    predictor = pretrained.load_predictor("coref-spanbert")
     all_mentions = list()
     for doc in documents:
-        prediction = predictor.predict_tokenized(tokenized_document=doc.get_words())
+        prediction = predictor.predict(
+            document="Paul Allen was born on January 21, 1953, in Seattle, Washington, to Kenneth Sam Allen and Edna Faye Allen. Allen attended Lakeside School, a private school in Seattle, where he befriended Bill Gates, two years younger, with whom he shared an enthusiasm for computers."
+        )
+        prediction = predictor.predict(tokenized_document=doc.get_words())
         doc.align_with_resource_doc(prediction['document'])
         doc.set_within_allen_coref(prediction['clusters'])
         mention_result = doc.create_mentions_data()
@@ -33,7 +35,6 @@ if __name__ == '__main__':
     parser.add_argument('--output_file', type=str, help='output file', required=True)
 
     args = parser.parse_args()
-    nlp = spacy.load('en_core_web_sm')
     io.create_if_not_exist(os.path.dirname(args.output_file))
 
     ecb_data_loader = EcbDataLoader()
