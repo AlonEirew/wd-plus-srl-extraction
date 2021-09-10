@@ -1,8 +1,8 @@
 from typing import List
 
-from src.data.mention import Mention
-from src.data.sentence import Sentence
-from src.data.token import Token
+from wd_plus_srl.data.mention import Mention
+from wd_plus_srl.data.sentence import Sentence
+from wd_plus_srl.data.token import Token
 
 
 class Doc(object):
@@ -26,8 +26,9 @@ class Doc(object):
         for i in range(0, len(clusters)):
             cluster = clusters[i]
             for coref_span in cluster:
-                for tok_id in range(coref_span[0], coref_span[1] + 1):
-                    self.find_token_and_set_cluster_id(tok_id, self.cluster_running_index)
+                if (coref_span[1] + 1) - coref_span[0] <= 5:
+                    for tok_id in range(coref_span[0], coref_span[1] + 1):
+                        self.find_token_and_set_cluster_id(tok_id, self.cluster_running_index)
 
             self.cluster_running_index += 1
 
@@ -57,7 +58,7 @@ class Doc(object):
 
         return words
 
-    def create_mentions_data(self):
+    def create_mentions_data(self) -> List[Mention]:
         mentions_result = list()
         for i in range(0, len(self.tokens)):
             token = self.tokens[i]

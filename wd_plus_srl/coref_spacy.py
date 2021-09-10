@@ -7,11 +7,10 @@ import logging
 import neuralcoref
 import spacy
 
-from src.data import io
-from src.data.data_loader import EcbDataLoader, IDataLoader
-from src.data.io import json_serialize_default
-from src.data.json_loader import JsonLoader
-from src.data.mention import Mention
+from wd_plus_srl.data import io
+from wd_plus_srl.data.data_loader import EcbDataLoader, IDataLoader, Duc2006Loader
+from wd_plus_srl.data.io import json_serialize_default
+from wd_plus_srl.data.mention import Mention
 
 logging.basicConfig(level=logging.INFO)
 
@@ -41,7 +40,7 @@ def evaluate_coref(data_path: str, data_loader: IDataLoader) -> List[Mention]:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create Within doc for ECB+ by SpaCy')
-    parser.add_argument('--data_root_path', type=str, help='corpus root', required=True)
+    parser.add_argument('--input_file', type=str, help='corpus root', required=True)
     parser.add_argument('--output_file', type=str, help='output file', required=True)
     parser.add_argument('--model', type=str, help='spacy model', required=True)
     args = parser.parse_args()
@@ -50,8 +49,8 @@ if __name__ == '__main__':
     neuralcoref.add_to_pipe(nlp)
     io.create_if_not_exist(os.path.dirname(args.output_file))
 
-    data_loader = JsonLoader()
-    coref_result = evaluate_coref(args.data_root_path, data_loader)
+    data_loader = Duc2006Loader()
+    coref_result = evaluate_coref(args.input_file, data_loader)
 
     with open(args.output_file, 'w') as f:
         json.dump(coref_result, f, default=json_serialize_default, indent=4, sort_keys=True)
