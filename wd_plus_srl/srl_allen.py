@@ -4,11 +4,11 @@ import os
 
 from allennlp.predictors.predictor import Predictor
 
-from src.data import io
-from src.data.data_loader import EcbDataLoader, IDataLoader
-from src.data.doc import Doc
-from src.data.io import json_serialize_default
-from src.data.sentence import SRLSentence, SRLVerb, SRLArg
+from wd_plus_srl.data import io
+from wd_plus_srl.data.data_loader import EcbDataLoader, IDataLoader
+from wd_plus_srl.data.doc import Doc
+from wd_plus_srl.data.io import json_serialize_default
+from wd_plus_srl.data.sentence import SRLSentence, SRLVerb, SRLArg
 
 
 def run_srl(ecb_path: str, data_loader: IDataLoader):

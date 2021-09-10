@@ -5,3 +5,4 @@ output
 *.pyc
 docs
 wd_plus_srl_extraction.egg-info
+model

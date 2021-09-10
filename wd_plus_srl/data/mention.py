@@ -3,7 +3,7 @@ from typing import List
 
 class Mention(object):
     def __init__(self, doc_id: str, sent_id: int, tokens_number: List[int],
-                 tokens_str: str, coref_chain: str):
+                 tokens_str: str, coref_chain: str, context: str = None):
         '''
 
         :param doc_id: the document ID
@@ -17,3 +17,4 @@ class Mention(object):
         self.tokens_number = tokens_number
         self.tokens_str = tokens_str
         self.coref_chain = coref_chain
+        self.context = context
