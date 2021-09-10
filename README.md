@@ -31,28 +31,28 @@ Install
 
 Run
 --
-###`coref_allen.py` 
-Generate within document co-reference using AllenNLP
+### Allen Coreference 
+`coref_allen.py` Generate within document co-reference using AllenNLP
 
 
     python src/coref_allen.py --input_file=ECB+ --output_file=output/allen_wd_coref.json
 
-###`srl_allen.py` 
-Generate semantic role labeling using AllenNLP
+### Allen SRL
+`srl_allen.py` Generate semantic role labeling using AllenNLP
 
 
     python src/srl_allen.py --ecb_root_path=ECB+/1 --output_file=output/allen_srl.json
 
 - In order to read the json file back to objects use ``srl_allen.read_srl_json(input_file)`` method
 
-###`coref_spacy.py` 
-Generate within document co-reference using neuralcoref
+### spaCy Coreference
+`coref_spacy.py` Generate within document co-reference using neuralcoref
 
 
     python src/coref_spacy.py --input_file=ECB+ --output_file=output/spacy_wd_coref.json --model=en_coref_lg
     
-###`coref_wec_model.py` 
-Generate within document and cross-document coreference using AllenNlp coref and WEC-Eng models.<br/>
+### WEC CD Coreference
+`coref_wec_model.py` Generate within document and cross-document coreference using AllenNlp coref and WEC-Eng models.<br/>
 This script has been used to generate the entity cross-document coreference facets in [IFacetSum](https://github.com/BIU-NLP/iFACETSUM).<br/>
 
 Using allen coref to predict and cluster within document coreference, then use WEC model to predict and generate cross document clusters.
